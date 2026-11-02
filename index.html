@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital E-book Payment Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dijital E-Kitap Satın Alma</h1>
+        <p>Bu özel dijital e-kitap ile bilginizi derinleştirin!</p>
+
+        <h2>Satın Alma Talimatları</h2>
+        <ol>
+            <li>Lütfen aşağıdaki Polygon (Matic) adresine <span class="highlight">10 USDC</span> gönderin.</li>
+            <li>İşlem notu (memo/data) alanına aşağıdaki benzersiz işlem referans ID'sini eklemeyi unutmayın. Bu, ödemenizi doğrulamak için kritik öneme sahiptir.</li>
+            <li>Ödemeyi yaptıktan sonra, işlem karma (transaction hash) değerini aşağıdaki forma girin ve "Ödemeyi Doğrula" butonuna tıklayın.</li>
+        </ol>
+
+        <p>Satıcı USDC Adresi: <span class="highlight" id="sellerUSDCAddress">0x...</span></p>
+        <p>Göndermeniz Gereken Miktar: <span class="highlight">10 USDC</span></p>
+        <p>Benzersiz İşlem Referans ID: <span class="highlight" id="transactionRefIdDisplay">REF-ID</span></p>
+
+        <form id="payment-form">
+            <label for="transactionHash">İşlem Karma (Transaction Hash):</label>
+            <input type="text" id="transactionHash" name="transactionHash" placeholder="0x..." required>
+            <!-- The transactionRefId is provided by the seller and used for verification -->
+            <input type="hidden" id="transactionRefId" value="EBOOK-REF-456789">
+            <button type="submit">Ödemeyi Doğrula</button>
+        </form>
+
+        <div id="response-message" class="info"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentForm = document.getElementById('payment-form');
+            const transactionHashInput = document.getElementById('transactionHash');
+            const transactionRefIdHidden = document.getElementById('transactionRefId');
+            const responseMessageDiv = document.getElementById('response-message');
+
+            // --- Mock Data for Simulation --- 
+            // In a real application, these would come from a backend or blockchain lookup.
+            const MOCK_SELLER_USDC_ADDRESS = '0x742d35Cc6634C0532927a5520b899d94aF2b396b';
+            const MOCK_PRODUCT_PRICE_USDC = '10';
+            const MOCK_UNIQUE_TRANSACTION_REF_ID = 'EBOOK-REF-456789';
+            // This is the "correct" hash that will lead to a successful verification in this simulation.
+            const MOCK_CORRECT_TRANSACTION_HASH = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+            // --- End Mock Data ---
+
+            // Display the mock data in the instructions for clarity
+            document.getElementById('sellerUSDCAddress').textContent = MOCK_SELLER_USDC_ADDRESS;
+            document.getElementById('transactionRefIdDisplay').textContent = MOCK_UNIQUE_TRANSACTION_REF_ID;
+            responseMessageDiv.innerHTML = `Lütfen ödemeyi doğrulamak için işlem karmasını girin. Başarılı doğrulama için örnek karma: <br><code>${MOCK_CORRECT_TRANSACTION_HASH}</code>`;
+
+
+            paymentForm.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const enteredTransactionHash = transactionHashInput.value.trim();
+                const expectedTransactionRefId = transactionRefIdHidden.value; // Get from hidden input
+
+                responseMessageDiv.className = 'info';
+                responseMessageDiv.innerHTML = 'Ödemeniz doğrulanıyor... Lütfen bekleyin.';
+
+                // Simulate an API call or blockchain lookup delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // --- Core technical concept: Payment Verification Logic (Simulated) ---
+                // In a real scenario, this would involve:
+                // 1. Calling a backend API.
+                // 2. The backend querying the Polygon blockchain for the transaction hash.
+                // 3. Verifying:
+                //    a. If the transaction exists.
+                //    b. If the recipient address matches MOCK_SELLER_USDC_ADDRESS.
+                //    c. If the amount sent is MOCK_PRODUCT_PRICE_USDC.
+                //    d. If the transaction memo/data contains MOCK_UNIQUE_TRANSACTION_REF_ID.
+                //    e. If the transaction is confirmed.
+
+                if (enteredTransactionHash === MOCK_CORRECT_TRANSACTION_HASH &&
+                    expectedTransactionRefId === MOCK_UNIQUE_TRANSACTION_REF_ID) {
+                    // Simulate successful verification
+                    responseMessageDiv.className = 'success';
+                    responseMessageDiv.innerHTML = `Ödeme başarıyla doğrulandı! E-kitabınız indirilmeye hazır. <br>İşlem Karma: <code>${enteredTransactionHash}</code>`;
+                } else {
+                    // Simulate failed verification
+                    responseMessageDiv.className = 'error';
+                    responseMessageDiv.innerHTML = `Ödeme doğrulanamadı. Lütfen işlem karmasını ve referans ID'sini kontrol edin. <br>Girdiğiniz Karma: <code>${enteredTransactionHash}</code>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
